@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TradingRoute</title>
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="description" content="วิเคราะห์ข่าวเศรษฐกิจ Forex ทุกวัน ปฏิทินข่าว และช่องทางติดต่อ">
 <link rel="icon" href="images/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -156,12 +157,21 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
 
 <div class="lb" id="lb" hidden><button class="x" type="button" id="lbx" aria-label="ปิด">×</button><img id="lbimg" alt=""></div>
 
-<script src="content.js"></script>
-<script src="brief.js"></script>
 <script>
-(function(){
+// โหลดไฟล์ข้อมูลใหม่ทุกครั้ง (กันเบราว์เซอร์จำเวอร์ชันเก่า)
+function loadData(files, done){
+  let left = files.length;
+  files.forEach(f => {
+    const s = document.createElement("script");
+    s.src = f + "?v=" + Date.now();
+    s.onload = s.onerror = () => { if (--left === 0) done(); };
+    document.head.appendChild(s);
+  });
+}
+loadData(["content.js", "brief.js"], function(){
   const S = window.SITE || {}, B = window.BRIEF || {};
   const $ = id => document.getElementById(id);
+  const V = "?v=" + Date.now();
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const ICON = {
     line:{bg:"#06C755",t:"LINE"}, youtube:{bg:"#FF0033",t:"▶"}, tiktok:{bg:"#111",t:"TT"},
@@ -169,7 +179,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
   };
 
   document.title = S.name || document.title;
-  $("logo").src = S.logo || ""; $("logo").alt = S.name || "";
+  $("logo").src = S.logo ? S.logo + V : ""; $("logo").alt = S.name || "";
   $("tag").textContent = S.tag || "";
   $("name").textContent = S.name || "";
   $("tagline").textContent = S.tagline || "";
@@ -185,7 +195,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
   const promos = S.promos || [];
   $("promo").hidden = promos.length === 0;
   $("promos").innerHTML = promos.map(p => {
-    const inner = `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"><div class="bd">${p.until ? `<span class="until">${esc(p.until)}</span>` : ""}<h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p></div>`;
+    const inner = `<img src="${esc(p.image)}${V}" alt="${esc(p.title)}" loading="lazy"><div class="bd">${p.until ? `<span class="until">${esc(p.until)}</span>` : ""}<h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p></div>`;
     return p.url ? `<a class="pm" href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : `<article class="pm">${inner}</article>`;
   }).join("");
 
@@ -195,7 +205,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
     `<div class="w ${it.level === "medium" ? "medium" : ""}"><span class="t">${esc(it.time)}</span><b>${esc(it.title)}</b><p>${esc(it.text)}</p></div>`).join("");
   $("bby").textContent = B.updated || "";
 
-  const card = r => `<button type="button" class="rv" data-img="${esc(r.image)}" aria-label="ดูรีวิว ${esc(r.caption)}"><img src="${esc(r.image)}" alt="${esc(r.caption)}" loading="lazy"><span>${esc(r.caption)}</span></button>`;
+  const card = r => `<button type="button" class="rv" data-img="${esc(r.image)}${V}" aria-label="ดูรีวิว ${esc(r.caption)}"><img src="${esc(r.image)}${V}" alt="${esc(r.caption)}" loading="lazy"><span>${esc(r.caption)}</span></button>`;
   const rv = S.reviews || [];
   $("review").hidden = rv.length === 0;
   $("rpreview").innerHTML = rv.slice(0, 4).map(card).join("");
@@ -215,7 +225,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
     if (r) scrollTo(0, 0);
   }
   addEventListener("hashchange", route); route();
-})();
+});
 </script>
 </body>
 </html>
