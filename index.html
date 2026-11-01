@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ชื่อกลุ่มของคุณ</title>
+<meta name="description" content="วิเคราะห์ข่าวเศรษฐกิจ Forex ทุกวัน ปฏิทินข่าว และช่องทางติดต่อ">
+<link rel="icon" href="images/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#0B1324; --surface:#121D33; --raise:#18264A; --fg:#E9EEF7; --muted:#93A1BC; --line:#24345A;
+  --gold:#D9B45A; --gold-ink:#1A1405; --high:#E5534B; --med:#E8913A;
+  --display:"Prompt","IBM Plex Sans Thai",system-ui,sans-serif;
+  --body:"IBM Plex Sans Thai","Prompt",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.65}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.25}
+a{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+.hero{padding-block:40px 24px;display:grid;justify-items:center;text-align:center;gap:10px}
+.logo{width:84px;height:84px;border-radius:22px;object-fit:cover}
+.hero h1{font-size:clamp(28px,5vw,40px)}
+.hero p{margin:0;color:var(--muted);max-width:52ch}
+.tag{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+
+.links{display:grid;gap:12px;max-width:520px;margin:0 auto;width:100%}
+.lk{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-decoration:none;color:var(--fg)}
+.lk:hover{border-color:var(--gold)}
+.lk.primary{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.lk i{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700;font-family:var(--display);font-size:13px}
+.lk div{flex:1;min-width:0}
+.lk strong{display:block;font-family:var(--display);font-weight:600}
+.lk small{opacity:.8;font-size:13px}
+.lk .arr{font-size:18px;opacity:.7}
+
+section{margin-top:44px;display:grid;gap:16px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+h2{font-size:24px}
+.date{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+.promos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.pm{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;min-width:0;text-decoration:none;color:var(--fg)}
+a.pm:hover{border-color:var(--gold)}
+.pm img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.pm .bd{padding:14px 16px;display:grid;gap:6px;align-content:start}
+.pm h3{font-size:17px}
+.pm p{margin:0;color:var(--muted);font-size:14px}
+.pm .until{font-family:var(--mono);font-size:12px;color:var(--gold)}
+
+.brief{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px}
+.brief .sum{margin:0;font-size:17px}
+.watch{display:grid;gap:10px}
+.w{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px 14px;background:var(--raise);border-radius:10px;border-left:4px solid var(--high)}
+.w.medium{border-left-color:var(--med)}
+.w .t{font-family:var(--mono);font-size:14px;color:var(--gold);grid-row:span 2}
+.w b{font-family:var(--display);font-weight:600}
+.w p{margin:0;color:var(--muted);font-size:14px;min-width:0}
+.by{font-size:13px;color:var(--muted)}
+
+.cal{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);min-height:600px}
+.tnote{font-size:13px;color:var(--muted);margin:0}
+
+.revgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.rv{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:14px;padding:0;overflow:hidden;cursor:zoom-in;text-align:left;font:inherit;display:grid}
+.rv img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.rv span{padding:8px 12px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+.btn{justify-self:center;display:inline-block;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-family:var(--display);font-weight:600;padding:10px 22px;border-radius:999px}
+.back{display:inline-block;margin-top:28px;text-decoration:none;font-weight:600}
+
+.lb{position:fixed;inset:0;background:rgba(3,6,14,.9);display:grid;place-items:center;padding:24px;z-index:20}
+.lb img{max-height:85vh;width:auto;border-radius:12px}
+.lb .x{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));border:0;background:var(--surface);color:var(--fg);border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:grid;gap:6px}
+@media (prefers-reduced-motion:no-preference){.lk,.rv,.pm{transition:transform .15s,border-color .15s}.lk:hover,.revgrid .rv:hover,a.pm:hover{transform:translateY(-2px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main id="view-home">
+    <header class="hero">
+      <img class="logo" id="logo" alt="">
+      <span class="tag" id="tag"></span>
+      <h1 id="name"></h1>
+      <p id="tagline"></p>
+    </header>
+
+    <nav class="links" id="links" aria-label="ช่องทางติดต่อ"></nav>
+
+    <section id="promo">
+      <div class="sh"><h2>โปรโมชั่น</h2></div>
+      <div class="promos" id="promos"></div>
+    </section>
+
+    <section id="brief">
+      <div class="sh"><h2>ข่าวสำคัญวันนี้</h2><span class="date" id="bdate"></span></div>
+      <div class="brief">
+        <p class="sum" id="bsum"></p>
+        <div class="watch" id="bitems"></div>
+        <span class="by" id="bby"></span>
+      </div>
+    </section>
+
+    <section id="calendar">
+      <div class="sh"><h2>ปฏิทินข่าวเศรษฐกิจ</h2><span class="date">เวลาไทย</span></div>
+      <div class="cal">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+          {
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "width": "100%",
+            "height": "600",
+            "locale": "th_TH",
+            "importanceFilter": "0,1",
+            "countryFilter": "us,eu,gb,jp,au,ca,nz,ch,cn"
+          }
+          </script>
+        </div>
+      </div>
+      <p class="tnote">แสดงเฉพาะข่าวผลกระทบปานกลางและสูง ข้อมูลจาก TradingView อัปเดตอัตโนมัติ</p>
+    </section>
+
+    <section id="review">
+      <div class="sh"><h2>รีวิวจากสมาชิก</h2></div>
+      <div class="revgrid" id="rpreview"></div>
+      <a class="btn" href="#reviews">ดูรีวิวทั้งหมด →</a>
+    </section>
+  </main>
+
+  <main id="view-reviews" hidden>
+    <a class="back" href="#home">← กลับหน้าหลัก</a>
+    <header class="hero">
+      <span class="tag">Member Reviews</span>
+      <h1>รีวิวจากสมาชิกในกลุ่ม</h1>
+      <p>กดที่รูปเพื่อดูขนาดใหญ่</p>
+    </header>
+    <div class="revgrid" id="rall"></div>
+  </main>
+
+  <footer>
+    <span id="copy"></span>
+    <span id="disc"></span>
+  </footer>
+</div>
+
+<div class="lb" id="lb" hidden><button class="x" type="button" id="lbx" aria-label="ปิด">×</button><img id="lbimg" alt=""></div>
+
+<script src="content.js"></script>
+<script src="brief.js"></script>
+<script>
+(function(){
+  const S = window.SITE || {}, B = window.BRIEF || {};
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const ICON = {
+    line:{bg:"#06C755",t:"LINE"}, youtube:{bg:"#FF0033",t:"▶"}, tiktok:{bg:"#111",t:"TT"},
+    facebook:{bg:"#1877F2",t:"f"}, instagram:{bg:"#D62976",t:"IG"}, other:{bg:"#24345A",t:"•"}
+  };
+
+  document.title = S.name || document.title;
+  $("logo").src = S.logo || ""; $("logo").alt = S.name || "";
+  $("tag").textContent = S.tag || "";
+  $("name").textContent = S.name || "";
+  $("tagline").textContent = S.tagline || "";
+  $("copy").textContent = "© " + new Date().getFullYear() + " " + (S.name || "");
+  $("disc").textContent = S.disclaimer || "";
+
+  $("links").innerHTML = (S.links || []).map((l, i) => {
+    const ic = ICON[l.type] || ICON.other;
+    return `<a class="lk${i === 0 ? " primary" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">
+      <i style="background:${ic.bg}">${ic.t}</i><div><strong>${esc(l.title)}</strong><small>${esc(l.detail)}</small></div><span class="arr">→</span></a>`;
+  }).join("");
+
+  const promos = S.promos || [];
+  $("promo").hidden = promos.length === 0;
+  $("promos").innerHTML = promos.map(p => {
+    const inner = `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"><div class="bd">${p.until ? `<span class="until">${esc(p.until)}</span>` : ""}<h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p></div>`;
+    return p.url ? `<a class="pm" href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : `<article class="pm">${inner}</article>`;
+  }).join("");
+
+  $("bdate").textContent = (B.date || "") + " · เวลาไทย";
+  $("bsum").textContent = B.summary || "";
+  $("bitems").innerHTML = (B.items || []).map(it =>
+    `<div class="w ${it.level === "medium" ? "medium" : ""}"><span class="t">${esc(it.time)}</span><b>${esc(it.title)}</b><p>${esc(it.text)}</p></div>`).join("");
+  $("bby").textContent = B.updated || "";
+
+  const card = r => `<button type="button" class="rv" data-img="${esc(r.image)}" aria-label="ดูรีวิว ${esc(r.caption)}"><img src="${esc(r.image)}" alt="${esc(r.caption)}" loading="lazy"><span>${esc(r.caption)}</span></button>`;
+  const rv = S.reviews || [];
+  $("review").hidden = rv.length === 0;
+  $("rpreview").innerHTML = rv.slice(0, 4).map(card).join("");
+  $("rall").innerHTML = rv.map(card).join("");
+
+  const lb = $("lb");
+  document.addEventListener("click", e => {
+    const c = e.target.closest(".rv");
+    if (c) { $("lbimg").src = c.dataset.img; lb.hidden = false; $("lbx").focus(); return; }
+    if (e.target === lb || e.target.id === "lbx") lb.hidden = true;
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
+
+  function route(){
+    const r = location.hash === "#reviews";
+    $("view-home").hidden = r; $("view-reviews").hidden = !r; lb.hidden = true;
+    if (r) scrollTo(0, 0);
+  }
+  addEventListener("hashchange", route); route();
+})();
+</script>
+</body>
+</html>
