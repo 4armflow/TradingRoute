@@ -1,9 +1,9 @@
 // ===== ข้อมูลของเว็บ: แก้ไฟล์นี้ไฟล์เดียวเพื่อเปลี่ยนข้อความ ลิงก์ โปรโมชั่น และรีวิว =====
 window.SITE = {
   name: "TradingRoute",
-  tag: "Forex Trading Community",
+  tag: "Your Route to Smarter Trading",
   tagline: "วิเคราะห์ข่าวเศรษฐกิจทุกวัน สรุปให้รู้ว่าวันนี้ต้องระวังข่าวไหน พร้อมคอมมูนิตี้เทรดเดอร์ที่ช่วยกันเรียนรู้",
-  logo: "images/logo.svg",
+  logo: "images/profile.jpg",
 
   // ช่องทางติดต่อ (ปุ่มแรกจะเป็นสีทอง เด่นที่สุด)
   links: [
