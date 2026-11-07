@@ -1,5 +1,5 @@
 // ดึงหัวข่าวจาก RSS ของ ryt9 แล้วกรองเฉพาะข่าวที่เกี่ยวกับทอง/ดอลลาร์/ดอกเบี้ย/น้ำมัน/ภูมิรัฐศาสตร์
-// เก็บเฉพาะ หัวข่าว + ลิงก์ + เวลา (ไม่เก็บเนื้อข่าว) ลง data/live-news.json
+// เก็บ หัวข่าว + ลิงก์ + เวลา + ข้อความนำสั้นๆ จาก RSS (ไม่เกิน ~280 ตัวอักษร ไม่เก็บเนื้อข่าวเต็ม) ลง data/live-news.json
 // ใช้: node scripts/fetch-ryt9.mjs   (Node 18+ ไม่ต้องติดตั้งอะไรเพิ่ม)
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 
@@ -7,6 +7,15 @@ const FEED = "https://www.ryt9.com/news/rss.xml";
 const OUT = new URL("../data/live-news.json", import.meta.url);
 const KEEP_DAYS = 3;
 const MAX_ITEMS = 60;
+const EXCERPT = 280;
+
+function excerpt(text) {
+  if (text.length <= EXCERPT) return text;
+  const cut = text.slice(0, EXCERPT);
+  const sp = cut.lastIndexOf(" ");
+  return (sp > EXCERPT * 0.6 ? cut.slice(0, sp) : cut).trim() + "…";
+}
+const creditFor = url => /\/s\/iq\//.test(url) ? "สำนักข่าวอินโฟเควสท์ (IQ) ผ่าน ryt9.com" : "ryt9.com";
 
 // ลำดับมีผล: ข่าวหนึ่งได้ป้ายแรกที่ตรง
 const TAGS = [
@@ -49,7 +58,8 @@ async function main() {
     const time = new Date(tag(it, "pubDate"));
     const t = classify(title, cat);
     if (!t || !/^https:\/\/www\.ryt9\.com\//.test(link) || isNaN(time)) return null;
-    return { title, url: link, time: time.toISOString(), tag: t, urgent: /ด่วน/.test(title) || undefined };
+    return { title, url: link, time: time.toISOString(), tag: t, urgent: /ด่วน/.test(title) || undefined,
+             summary: excerpt(tag(it, "description")) || undefined, credit: creditFor(link) };
   }).filter(Boolean);
   if (!xml.includes("<item>")) throw new Error("feed has no items");
 

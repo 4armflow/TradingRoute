@@ -73,13 +73,24 @@ a.pm:hover{border-color:var(--gold)}
 .lfilters button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:4px 12px;border-radius:999px;cursor:pointer}
 .lfilters button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
 .llist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.llist li{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:12px 16px;border-top:1px solid var(--line)}
+.llist li{border-top:1px solid var(--line)}
+.llist summary{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;padding:12px 16px;cursor:pointer;list-style:none}
+.llist summary::-webkit-details-marker{display:none}
+.llist summary::after{content:"▾";grid-column:3;grid-row:1 / span 2;align-self:center;color:var(--muted);transition:transform .15s}
+.llist details[open] summary::after{transform:rotate(180deg)}
+.llist details[open] summary{background:var(--raise)}
+.llist summary:hover .lh{color:var(--gold)}
+.llist .lh{grid-column:2;font-weight:500;min-width:0;overflow-wrap:anywhere}
+.llist .lm{grid-column:2}
+.llist .lb2{padding:4px 16px 14px calc(16px + 3.2em + 12px);display:grid;gap:6px;background:var(--raise)}
+.llist .lb2 p{margin:0;font-size:14px;line-height:1.7;max-width:70ch}
+.llist .lb2 .cr{font-size:12px;color:var(--muted)}
+.llist .lb2 .cr a{color:var(--gold)}
+@media (max-width:480px){.llist .lb2{padding-left:16px}}
 .llist li:first-child{border-top:0}
 .llist li.sep{display:block;padding:0}
 .llist .lt{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;grid-row:span 2;padding-top:2px;min-width:3.2em}
 .llist .lm{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.llist a{color:var(--fg);text-decoration:none;font-weight:500;min-width:0;overflow-wrap:anywhere}
-.llist a:hover{color:var(--gold);text-decoration:underline}
 .llist .new{font-size:11px;font-weight:700;color:var(--high)}
 .llist .daysep{display:block;padding:6px 16px;background:var(--raise);font-size:12px;font-weight:600;color:var(--muted)}
 .lmore{justify-self:center;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:6px 16px;border-radius:999px;cursor:pointer}
@@ -173,7 +184,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
         <button type="button" data-lf="geo" aria-pressed="false">ภูมิรัฐศาสตร์/น้ำมัน</button>
       </div>
       <ol class="llist" id="litems"></ol>
-      <p class="tnote">หัวข่าวจาก <a href="https://www.ryt9.com/news-latest" target="_blank" rel="noopener noreferrer">ryt9.com</a> คัดเฉพาะข่าวที่เกี่ยวกับทองคำ อัปเดตทุก 15 นาที กดหัวข่าวเพื่ออ่านต่อที่ ryt9</p>
+      <p class="tnote">หัวข่าวจาก <a href="https://www.ryt9.com/news-latest" target="_blank" rel="noopener noreferrer">ryt9.com</a> คัดเฉพาะข่าวที่เกี่ยวกับทองคำ อัปเดตทุก 15 นาที กดหัวข่าวเพื่ออ่านสรุป · ลิขสิทธิ์ข่าวเป็นของแหล่งข่าวต้นทาง</p>
     </section>
 
     <section id="calendar">
@@ -386,9 +397,14 @@ loadData(["content.js", "brief.js"], function(){
       const t = TAG[it.tag] || { label: "อื่นๆ", c: "#6B7280" };
       const chip = el("span", "chip", t.label); chip.style.setProperty("--c", t.c); meta.append(chip);
       if (Date.now() - d < 60 * 60 * 1000) meta.append(el("span", "new", "ใหม่"));
-      const a = el("a", null, it.title);
-      if (/^https:\/\/www\.ryt9\.com\//.test(it.url)) { a.href = it.url; a.target = "_blank"; a.rel = "noopener noreferrer"; }
-      li.append(el("span", "lt", fmt(d, { hour: "2-digit", minute: "2-digit" })), meta, a);
+      const det = el("details"), sum = el("summary");
+      sum.append(el("span", "lt", fmt(d, { hour: "2-digit", minute: "2-digit" })), meta, el("span", "lh", it.title));
+      const body = el("div", "lb2");
+      body.append(el("p", null, it.summary || "ยังไม่มีข้อความสรุปสำหรับข่าวนี้"));
+      const cr = el("p", "cr", "ที่มา: " + (it.credit || "ryt9.com"));
+      if (/^https:\/\/www\.ryt9\.com\//.test(it.url)) { const a = el("a", null, "อ่านฉบับเต็ม ↗"); a.href = it.url; a.target = "_blank"; a.rel = "noopener noreferrer"; cr.append(" · ", a); }
+      body.append(cr);
+      det.append(sum, body); li.append(det);
       out.push(li);
     });
     list.replaceChildren(...out);
