@@ -69,7 +69,20 @@ a.pm:hover{border-color:var(--gold)}
 .by{font-size:13px;color:var(--muted)}
 
 .cal{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);min-height:600px}
-.cal.livefeed{min-height:520px}
+.lfilters{display:flex;gap:8px;flex-wrap:wrap}
+.lfilters button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:4px 12px;border-radius:999px;cursor:pointer}
+.lfilters button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.llist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.llist li{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:12px 16px;border-top:1px solid var(--line)}
+.llist li:first-child{border-top:0}
+.llist li.sep{display:block;padding:0}
+.llist .lt{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;grid-row:span 2;padding-top:2px;min-width:3.2em}
+.llist .lm{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.llist a{color:var(--fg);text-decoration:none;font-weight:500;min-width:0;overflow-wrap:anywhere}
+.llist a:hover{color:var(--gold);text-decoration:underline}
+.llist .new{font-size:11px;font-weight:700;color:var(--high)}
+.llist .daysep{display:block;padding:6px 16px;background:var(--raise);font-size:12px;font-weight:600;color:var(--muted)}
+.lmore{justify-self:center;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:6px 16px;border-radius:999px;cursor:pointer}
 .quote{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:4px 8px;min-height:96px}
 
 .stale{margin:0;justify-self:start;font-size:13px;font-weight:600;color:var(--med);background:color-mix(in srgb,var(--med) 12%,transparent);padding:4px 12px;border-radius:999px}
@@ -152,25 +165,15 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
     </section>
 
     <section id="live">
-      <div class="sh"><h2>ข่าวทองคำล่าสุด</h2><span class="date">อัปเดตสด</span></div>
-      <div class="cal livefeed">
-        <div class="tradingview-widget-container">
-          <div class="tradingview-widget-container__widget"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-          {
-            "feedMode": "symbol",
-            "symbol": "OANDA:XAUUSD",
-            "colorTheme": "light",
-            "isTransparent": true,
-            "displayMode": "regular",
-            "width": "100%",
-            "height": "520",
-            "locale": "th_TH"
-          }
-          </script>
-        </div>
+      <div class="sh"><h2>ข่าวทองคำและตลาดล่าสุด</h2><span class="date" id="ldate"></span></div>
+      <div class="lfilters" role="group" aria-label="กรองข่าว">
+        <button type="button" data-lf="all" aria-pressed="true">ทั้งหมด</button>
+        <button type="button" data-lf="gold" aria-pressed="false">ทองคำ</button>
+        <button type="button" data-lf="macro" aria-pressed="false">เฟด/ดอลลาร์/เศรษฐกิจ</button>
+        <button type="button" data-lf="geo" aria-pressed="false">ภูมิรัฐศาสตร์/น้ำมัน</button>
       </div>
-      <p class="tnote">หัวข่าวจาก TradingView อัปเดตตลอดเวลา (บางข่าวเป็นภาษาอังกฤษ)</p>
+      <ol class="llist" id="litems"></ol>
+      <p class="tnote">หัวข่าวจาก <a href="https://www.ryt9.com/news-latest" target="_blank" rel="noopener noreferrer">ryt9.com</a> คัดเฉพาะข่าวที่เกี่ยวกับทองคำ อัปเดตทุก 15 นาที กดหัวข่าวเพื่ออ่านต่อที่ ryt9</p>
     </section>
 
     <section id="calendar">
@@ -346,6 +349,75 @@ loadData(["content.js", "brief.js"], function(){
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(render)
     .catch(empty);
+})();
+
+// ===== ข่าวทองคำและตลาดล่าสุด (data/live-news.json จาก ryt9 ทุก 15 นาที) =====
+(function(){
+  const $ = id => document.getElementById(id);
+  const TAG = {
+    gold:    { label: "ทองคำ",        c: "#A7801F", g: "gold" },
+    fed:     { label: "เฟด",          c: "#1F5FBF", g: "macro" },
+    central: { label: "ธนาคารกลาง",    c: "#0F6E8C", g: "macro" },
+    dollar:  { label: "ดอลลาร์/บอนด์",  c: "#2E7D32", g: "macro" },
+    economy: { label: "เศรษฐกิจ",      c: "#0E7A6B", g: "macro" },
+    tariff:  { label: "ภาษีการค้า",    c: "#9A5B13", g: "macro" },
+    uspol:   { label: "การเมืองสหรัฐฯ", c: "#6B3FA0", g: "macro" },
+    oil:     { label: "น้ำมัน",        c: "#4A4F57", g: "geo" },
+    geo:     { label: "ภูมิรัฐศาสตร์",  c: "#B23A3A", g: "geo" }
+  };
+  const SHOW = 20;
+  let data = [], filter = "all", limit = SHOW;
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; };
+  const fmt = (d, o) => new Intl.DateTimeFormat("th-TH", Object.assign({ timeZone: "Asia/Bangkok" }, o)).format(d);
+  const dayKey = d => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Bangkok" }).format(d);
+
+  function draw(){
+    const list = $("litems");
+    const rows = data.filter(it => filter === "all" || (TAG[it.tag] || {}).g === filter);
+    if (!rows.length) { list.replaceChildren(el("li", "nempty", data.length ? "ยังไม่มีข่าวในหมวดนี้" : "ยังไม่มีข่าวอัปเดต")); $("lmore")?.remove(); return; }
+    const today = dayKey(new Date()), out = [];
+    let lastDay = null;
+    rows.slice(0, limit).forEach(it => {
+      const d = new Date(it.time), k = dayKey(d);
+      if (k !== lastDay && k !== today) { const sep = el("li", "sep"); sep.append(el("span", "daysep", fmt(d, { weekday: "long", day: "numeric", month: "short" }))); out.push(sep); }
+      lastDay = k;
+      const li = el("li");
+      const meta = el("div", "lm");
+      const t = TAG[it.tag] || { label: "อื่นๆ", c: "#6B7280" };
+      const chip = el("span", "chip", t.label); chip.style.setProperty("--c", t.c); meta.append(chip);
+      if (Date.now() - d < 60 * 60 * 1000) meta.append(el("span", "new", "ใหม่"));
+      const a = el("a", null, it.title);
+      if (/^https:\/\/www\.ryt9\.com\//.test(it.url)) { a.href = it.url; a.target = "_blank"; a.rel = "noopener noreferrer"; }
+      li.append(el("span", "lt", fmt(d, { hour: "2-digit", minute: "2-digit" })), meta, a);
+      out.push(li);
+    });
+    list.replaceChildren(...out);
+    let more = $("lmore");
+    if (rows.length > limit) {
+      if (!more) { more = el("button", "lmore", "ดูข่าวเพิ่ม"); more.type = "button"; more.id = "lmore"; more.onclick = () => { limit += SHOW; draw(); }; list.after(more); }
+    } else if (more) more.remove();
+  }
+
+  function load(){
+    fetch("data/live-news.json?v=" + Date.now(), { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(j => {
+        data = (Array.isArray(j.items) ? j.items : []).filter(it => it && it.title && !isNaN(new Date(it.time)));
+        const up = new Date(j.updated);
+        $("ldate").textContent = isNaN(up) ? "" : "อัปเดต " + fmt(up, { hour: "2-digit", minute: "2-digit" }) + " น.";
+        draw();
+      })
+      .catch(() => { if (!data.length) { $("ldate").textContent = ""; draw(); } });
+  }
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-lf]"); if (!b) return;
+    filter = b.dataset.lf; limit = SHOW;
+    document.querySelectorAll("[data-lf]").forEach(x => x.setAttribute("aria-pressed", x === b));
+    draw();
+  });
+  load();
+  setInterval(load, 5 * 60 * 1000); // เปิดหน้าทิ้งไว้ก็ได้ข่าวใหม่เอง
 })();
 </script>
 </body>
