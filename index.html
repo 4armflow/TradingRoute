@@ -69,6 +69,20 @@ a.pm:hover{border-color:var(--gold)}
 .by{font-size:13px;color:var(--muted)}
 
 .cal{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);min-height:600px}
+.cal.livefeed{min-height:520px}
+.quote{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:4px 8px;min-height:96px}
+
+.stale{margin:0;justify-self:start;font-size:13px;font-weight:600;color:var(--med);background:color-mix(in srgb,var(--med) 12%,transparent);padding:4px 12px;border-radius:999px}
+.nsum{margin:0;font-size:17px;max-width:68ch}
+.ncards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.nc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start;min-width:0}
+.chip{justify-self:start;font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);padding:2px 10px;border-radius:999px}
+.nc h3{font-size:17px}
+.nc dl{margin:0;display:grid;gap:6px}
+.nc dt{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted)}
+.nc dd{margin:0;font-size:14px;overflow-wrap:anywhere}
+.nc .src{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.nempty{margin:0;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:16px}
 .tnote{font-size:13px;color:var(--muted);margin:0}
 
 .revgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
@@ -102,13 +116,61 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
       <div class="promos" id="promos"></div>
     </section>
 
+    <section id="gold">
+      <div class="sh"><h2>ราคาทองคำสด</h2><span class="date">XAU/USD</span></div>
+      <div class="quote">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+          {
+            "symbol": "OANDA:XAUUSD",
+            "colorTheme": "light",
+            "isTransparent": true,
+            "width": "100%",
+            "locale": "th_TH"
+          }
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <section id="news">
+      <div class="sh"><h2>สรุปข่าวตลาด</h2><span class="date" id="ndate"></span></div>
+      <p class="stale" id="nstale" hidden></p>
+      <p class="nsum" id="nsum"></p>
+      <div class="ncards" id="nitems"></div>
+      <p class="tnote" id="nnote">สรุปข่าวเพื่อให้ข้อมูล ไม่ใช่คำแนะนำการลงทุน</p>
+    </section>
+
     <section id="brief">
-      <div class="sh"><h2>ข่าวสำคัญวันนี้</h2><span class="date" id="bdate"></span></div>
+      <div class="sh"><h2>ข่าวที่ต้องจับตาวันนี้</h2><span class="date" id="bdate"></span></div>
       <div class="brief">
         <p class="sum" id="bsum"></p>
         <div class="watch" id="bitems"></div>
         <span class="by" id="bby"></span>
       </div>
+    </section>
+
+    <section id="live">
+      <div class="sh"><h2>ข่าวทองคำล่าสุด</h2><span class="date">อัปเดตสด</span></div>
+      <div class="cal livefeed">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+          {
+            "feedMode": "symbol",
+            "symbol": "OANDA:XAUUSD",
+            "colorTheme": "light",
+            "isTransparent": true,
+            "displayMode": "regular",
+            "width": "100%",
+            "height": "520",
+            "locale": "th_TH"
+          }
+          </script>
+        </div>
+      </div>
+      <p class="tnote">หัวข่าวจาก TradingView อัปเดตตลอดเวลา (บางข่าวเป็นภาษาอังกฤษ)</p>
     </section>
 
     <section id="calendar">
@@ -226,6 +288,65 @@ loadData(["content.js", "brief.js"], function(){
   }
   addEventListener("hashchange", route); route();
 });
+
+// ===== สรุปข่าวตลาด (data/news.json) =====
+(function(){
+  const $ = id => document.getElementById(id);
+  const CAT = {
+    "fed":          { label: "เฟด",          c: "#1F5FBF" },
+    "central-bank": { label: "ธนาคารกลาง",    c: "#0F6E8C" },
+    "economy":      { label: "เศรษฐกิจ",      c: "#0E7A6B" },
+    "dollar":       { label: "ดอลลาร์",       c: "#2E7D32" },
+    "tariff":       { label: "ภาษีการค้า",    c: "#9A5B13" },
+    "election":     { label: "การเมือง/เลือกตั้ง", c: "#6B3FA0" },
+    "geopolitics":  { label: "ภูมิรัฐศาสตร์",  c: "#B23A3A" },
+    "oil":          { label: "น้ำมัน",        c: "#4A4F57" }
+  };
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; };
+  const safeUrl = u => { try { const x = new URL(String(u)); return x.protocol === "https:" ? x.href : null; } catch (e) { return null; } };
+  const todayTH = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Bangkok", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  const thDate = d => { const t = new Date(String(d) + "T12:00:00+07:00"); return isNaN(t) ? String(d || "") : t.toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Bangkok" }); };
+  const thTime = ts => { const t = new Date(ts); return isNaN(t) ? "" : t.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok" }) + " น."; };
+
+  function empty(){
+    $("ndate").textContent = "";
+    $("nsum").textContent = "";
+    $("nstale").hidden = true;
+    $("nitems").replaceChildren(el("p", "nempty", "ยังไม่มีข่าวอัปเดต"));
+  }
+
+  function render(n){
+    if (!n || !Array.isArray(n.items) || n.items.length === 0) return empty();
+    const up = n.updated ? " · อัปเดต " + thTime(n.updated) : "";
+    $("ndate").textContent = thDate(n.date) + up;
+    $("nsum").textContent = n.summary || "";
+    const stale = n.date && n.date !== todayTH();
+    $("nstale").hidden = !stale;
+    if (stale) $("nstale").textContent = "ข่าวล่าสุดจากวันที่ " + thDate(n.date);
+
+    const cards = n.items.slice(0, 12).map(it => {
+      const cat = CAT[it.category] || { label: "อื่นๆ", c: "#6B7280" };
+      const card = el("article", "nc");
+      const chip = el("span", "chip", cat.label); chip.style.setProperty("--c", cat.c);
+      const dl = el("dl");
+      if (it.what) { dl.append(el("dt", null, "เกิดอะไรขึ้น"), el("dd", null, it.what)); }
+      if (it.why)  { dl.append(el("dt", null, "ทำไมสำคัญ"),  el("dd", null, it.why)); }
+      const src = el("div", "src");
+      const url = safeUrl(it.url);
+      if (url) { const a = el("a", null, (it.source || "แหล่งข่าว") + " ↗"); a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; src.append(a); }
+      else if (it.source) src.append(el("span", null, it.source));
+      if (it.published) src.append(el("span", null, thDate(it.published)));
+      card.append(chip, el("h3", null, it.title || ""), dl, src);
+      return card;
+    });
+    $("nitems").replaceChildren(...cards);
+  }
+
+  fetch("data/news.json?v=" + Date.now(), { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(render)
+    .catch(empty);
+})();
 </script>
 </body>
 </html>
