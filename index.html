@@ -6,6 +6,14 @@
 <title>TradingRoute</title>
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="description" content="วิเคราะห์ข่าวเศรษฐกิจ Forex ทุกวัน ปฏิทินข่าว และช่องทางติดต่อ">
+<!-- นับผู้เข้าชม: Google Tag Manager + Consent Mode (ไม่เก็บคุกกี้จนกว่าผู้ใช้กดยอมรับ) -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: "denied", wait_for_update: 500 });
+  try { if (localStorage.getItem("tr-consent") === "granted") gtag("consent", "update", { analytics_storage: "granted" }); } catch (e) {}
+</script>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-5XVS3HP2');</script>
 <link rel="icon" href="images/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -119,11 +127,18 @@ a.pm:hover{border-color:var(--gold)}
 .lb{position:fixed;inset:0;background:rgba(14,26,51,.85);display:grid;place-items:center;padding:24px;z-index:20}
 .lb img{max-height:85vh;width:auto;border-radius:12px}
 .lb .x{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));border:0;background:var(--surface);color:var(--fg);border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer}
+.consent{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(14,26,51,.08);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.consent .in{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.consent p{margin:0;font-size:13px;color:var(--fg);flex:1 1 280px}
+.consent .bt{display:flex;gap:8px}
+.consent button{font:inherit;font-size:14px;border-radius:999px;padding:6px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.consent button.ok{background:var(--gold);border-color:var(--gold);color:var(--gold-ink);font-weight:600}
 footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:grid;gap:6px}
 @media (prefers-reduced-motion:no-preference){.lk,.rv,.pm{transition:transform .15s,border-color .15s}.lk:hover,.revgrid .rv:hover,a.pm:hover{transform:translateY(-2px)}}
 </style>
 </head>
 <body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5XVS3HP2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="wrap">
   <main id="view-home">
     <header class="hero">
@@ -434,6 +449,27 @@ loadData(["content.js", "brief.js"], function(){
   });
   load();
   setInterval(load, 5 * 60 * 1000); // เปิดหน้าทิ้งไว้ก็ได้ข่าวใหม่เอง
+})();
+</script>
+<div class="consent" id="consent" role="region" aria-label="การใช้คุกกี้" hidden>
+  <div class="in">
+    <p>เว็บนี้ใช้คุกกี้ของ Google Analytics เพื่อนับจำนวนผู้เข้าชมและปรับปรุงเว็บ ไม่ใช้เพื่อโฆษณา</p>
+    <div class="bt"><button type="button" id="cno">ไม่ยอมรับ</button><button type="button" class="ok" id="cyes">ยอมรับ</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  let saved = null;
+  try { saved = localStorage.getItem("tr-consent"); } catch (e) {}
+  const box = document.getElementById("consent");
+  if (!saved) box.hidden = false;
+  function choose(v){
+    try { localStorage.setItem("tr-consent", v); } catch (e) {}
+    if (v === "granted") gtag("consent", "update", { analytics_storage: "granted" });
+    box.hidden = true;
+  }
+  document.getElementById("cyes").onclick = () => choose("granted");
+  document.getElementById("cno").onclick = () => choose("denied");
 })();
 </script>
 </body>
