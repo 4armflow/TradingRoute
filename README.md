@@ -7,7 +7,7 @@
 | ต้องการเปลี่ยน | แก้ไฟล์ |
 |---|---|
 | ชื่อกลุ่ม คำโปรย ลิงก์ LINE OA / YouTube / TikTok | `content.js` |
-| เพิ่ม/ลบโปรโมชั่น | `content.js` (ส่วน `promos`) + รูปใน `images/promos/` |
+| เพิ่ม/ลบโปรโมชั่น | อัปโหลดรูปเข้าโฟลเดอร์ `promos/` (ดูวิธีใน `promos/README.md`) |
 | เพิ่ม/ลบรีวิว | `content.js` (ส่วน `reviews`) + รูปใน `images/reviews/` |
 | โลโก้ | แทนไฟล์ `images/logo.svg` หรือใส่รูปใหม่แล้วแก้ `logo` ใน `content.js` |
 | ข่าวที่ต้องจับตาวันนี้ (ปฏิทินข่าวที่จะประกาศ) | `brief.js` |

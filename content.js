@@ -12,18 +12,8 @@ window.SITE = {
     { type: "tiktok",  title: "TikTok",                  detail: "@tradingroute · สรุปข่าวสั้นรายวัน", url: "https://tiktok.com/@tradingroute" }
   ],
 
-  // โปรโมชั่น: เพิ่มหรือลบได้ทีละก้อน { ... }  ถ้าไม่มีโปร ให้เหลือ promos: []
-  // ตัวอย่างการ์ดโปรโมชั่น (ปิดไว้ก่อน):
-  // { image: "images/promos/promo-1.svg", until: "ถึง 30 พ.ย. 2569", title: "สมาชิก VIP ราคาพิเศษ", detail: "รายละเอียด", url: "https://lin.ee/PU1pnU2" },
-  promos: [],
-  _promosOff: [
-    { image: "images/promos/promo-1.svg", until: "ถึง 30 พ.ย. 2569", title: "สมาชิก VIP ราคาพิเศษ",
-      detail: "รับบทวิเคราะห์ข่าวทุกเช้า ไลฟ์คืนข่าวแรง และห้องถามตอบกับแอดมิน", url: "https://lin.ee/PU1pnU2" },
-    { image: "images/promos/promo-2.svg", until: "ดูฟรีบน YouTube", title: "ไลฟ์วิเคราะห์ข่าว NFP",
-      detail: "วางแผนก่อนข่าวออก และสรุปผลหลังข่าวออกทันที", url: "https://youtube.com/@TradingRoute-TH" }
-  ],
+  // โปรโมชั่น: ไม่ต้องแก้ที่นี่ อัปโหลดรูปเข้าโฟลเดอร์ promos/ ได้เลย (ดูวิธีใน promos/README.md)
 
-  // รีวิว: ใส่รูปไว้ในโฟลเดอร์ images/reviews แล้วเพิ่มชื่อไฟล์ที่นี่ (4 รูปแรกจะโชว์ในหน้าหลัก)
   // ตัวอย่างรีวิว (ปิดไว้ก่อน):
   // { image: "images/reviews/review-1.svg", caption: "สมาชิก A · 3 เดือน" },
   reviews: [],

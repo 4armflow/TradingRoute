@@ -57,14 +57,26 @@ section{margin-top:44px;display:grid;gap:16px}
 h2{font-size:24px}
 .date{font-family:var(--mono);font-size:13px;color:var(--muted)}
 
-.promos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.pm{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;min-width:0;text-decoration:none;color:var(--fg)}
-a.pm:hover{border-color:var(--gold)}
-.pm img{width:100%;aspect-ratio:16/9;object-fit:cover}
-.pm .bd{padding:14px 16px;display:grid;gap:6px;align-content:start}
-.pm h3{font-size:17px}
-.pm p{margin:0;color:var(--muted);font-size:14px}
-.pm .until{font-family:var(--mono);font-size:12px;color:var(--gold)}
+.car{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;position:relative;aspect-ratio:4/3;max-height:520px;width:100%;display:block;overflow:hidden;background:var(--raise)}
+.slide .bg{position:absolute;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);max-width:none;object-fit:cover;filter:blur(20px) brightness(.9);opacity:.6}
+.slide .fg{position:relative;width:100%;height:100%;object-fit:contain}
+.car .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:var(--fg);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(14,26,51,.2)}
+.car .prev{left:10px}.car .next{right:10px}
+.dots{display:flex;justify-content:center;gap:8px}
+.dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;background:var(--line);cursor:pointer}
+.dots button[aria-current="true"]{background:var(--gold);width:20px;border-radius:4px}
+.plist{display:grid;gap:20px}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;scroll-margin-top:16px}
+.pc img{width:100%;height:auto;background:var(--raise)}
+.pc .bd{padding:16px 18px;display:grid;gap:8px}
+.pc h3{font-size:20px}
+.pc .until{font-family:var(--mono);font-size:13px;color:var(--high);font-weight:500}
+.pc .det{margin:0;white-space:pre-line;color:var(--fg);font-size:15px}
+.pc .cta{justify-self:start;display:inline-block;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--display);font-weight:600;padding:10px 22px;border-radius:999px}
+.pc.hl{outline:2px solid var(--gold);outline-offset:2px}
 
 .brief{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px}
 .brief .sum{margin:0;font-size:17px}
@@ -150,9 +162,14 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
 
     <nav class="links" id="links" aria-label="ช่องทางติดต่อ"></nav>
 
-    <section id="promo">
-      <div class="sh"><h2>โปรโมชั่น</h2></div>
-      <div class="promos" id="promos"></div>
+    <section id="promo" hidden>
+      <div class="sh"><h2>โปรโมชั่น</h2><a class="date" href="#promos">ดูทั้งหมด →</a></div>
+      <div class="car" id="car" aria-roledescription="carousel" aria-label="โปรโมชั่น">
+        <div class="track" id="ptrack"></div>
+        <button type="button" class="nav prev" id="pprev" aria-label="ก่อนหน้า">‹</button>
+        <button type="button" class="nav next" id="pnext" aria-label="ถัดไป">›</button>
+      </div>
+      <div class="dots" id="pdots"></div>
     </section>
 
     <section id="gold">
@@ -230,6 +247,15 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:v
     </section>
   </main>
 
+  <main id="view-promos" hidden>
+    <a class="back" href="#home">← กลับหน้าหลัก</a>
+    <header class="hero">
+      <span class="tag">Promotions</span>
+      <h1>โปรโมชั่นทั้งหมด</h1>
+    </header>
+    <div class="plist" id="plist"></div>
+  </main>
+
   <main id="view-reviews" hidden>
     <a class="back" href="#home">← กลับหน้าหลัก</a>
     <header class="hero">
@@ -283,13 +309,6 @@ loadData(["content.js", "brief.js"], function(){
       <i style="background:${ic.bg}">${ic.t}</i><div><strong>${esc(l.title)}</strong><small>${esc(l.detail)}</small></div><span class="arr">→</span></a>`;
   }).join("");
 
-  const promos = S.promos || [];
-  $("promo").hidden = promos.length === 0;
-  $("promos").innerHTML = promos.map(p => {
-    const inner = `<img src="${esc(p.image)}${V}" alt="${esc(p.title)}" loading="lazy"><div class="bd">${p.until ? `<span class="until">${esc(p.until)}</span>` : ""}<h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p></div>`;
-    return p.url ? `<a class="pm" href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : `<article class="pm">${inner}</article>`;
-  }).join("");
-
   $("bdate").textContent = (B.date || "") + " · เวลาไทย";
   $("bsum").textContent = B.summary || "";
   $("bitems").innerHTML = (B.items || []).map(it =>
@@ -311,12 +330,80 @@ loadData(["content.js", "brief.js"], function(){
   document.addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
 
   function route(){
-    const r = location.hash === "#reviews";
-    $("view-home").hidden = r; $("view-reviews").hidden = !r; lb.hidden = true;
+    const h = location.hash, r = h === "#reviews", p = h === "#promos" || /^#promo-\d+$/.test(h);
+    $("view-home").hidden = r || p; $("view-reviews").hidden = !r; $("view-promos").hidden = !p; lb.hidden = true;
     if (r) scrollTo(0, 0);
+    if (p) window.showPromo && window.showPromo(h);
   }
+  window.routePage = route;
   addEventListener("hashchange", route); route();
 });
+
+// ===== โปรโมชั่น (data/promos.json สร้างจากโฟลเดอร์ promos/) =====
+(function(){
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; };
+  const thDate = d => { const t = new Date(d + "T12:00:00+07:00"); return isNaN(t) ? d : t.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Bangkok" }); };
+  const safe = u => /^https:\/\//.test(u || "") ? u : null;
+  let items = [], idx = 0, timer = null;
+
+  window.showPromo = h => {
+    scrollTo(0, 0);
+    const card = h && h !== "#promos" ? document.getElementById(h.slice(1)) : null;
+    document.querySelectorAll(".pc.hl").forEach(x => x.classList.remove("hl"));
+    if (card) { card.classList.add("hl"); setTimeout(() => card.scrollIntoView({ block: "start" }), 50); }
+  };
+
+  function lineUrl(){ const l = ((window.SITE || {}).links || [])[0]; return l && safe(l.url); }
+
+  function go(i){
+    if (!items.length) return;
+    idx = (i + items.length) % items.length;
+    const t = $("ptrack"); t.scrollTo({ left: t.clientWidth * idx, behavior: "smooth" });
+    [...$("pdots").children].forEach((d, k) => d.setAttribute("aria-current", k === idx));
+  }
+  function auto(){ clearInterval(timer); if (items.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) timer = setInterval(() => go(idx + 1), 5000); }
+
+  function render(){
+    const has = items.length > 0;
+    $("promo").hidden = !has;
+    if (!has) { $("plist").replaceChildren(el("p", "nempty", "ยังไม่มีโปรโมชั่นในตอนนี้")); return; }
+    const V = "?v=" + Date.now();
+    $("ptrack").replaceChildren(...items.map(p => {
+      const a = el("a", "slide"); a.href = "#" + p.id; a.setAttribute("aria-label", p.title || "ดูรายละเอียดโปรโมชั่น");
+      const bg = el("img", "bg"); bg.src = p.image + V; bg.alt = ""; bg.setAttribute("aria-hidden", "true");
+      const fg = el("img", "fg"); fg.src = p.image + V; fg.alt = p.title || "โปรโมชั่น"; fg.loading = "lazy";
+      a.append(bg, fg); return a;
+    }));
+    $("pdots").replaceChildren(...items.map((_, i) => { const b = el("button"); b.type = "button"; b.setAttribute("aria-label", "โปร " + (i + 1)); b.onclick = () => { go(i); auto(); }; return b; }));
+    const one = items.length < 2; $("pprev").hidden = one; $("pnext").hidden = one; $("pdots").hidden = one;
+    $("plist").replaceChildren(...items.map(p => {
+      const c = el("article", "pc"); c.id = p.id;
+      const img = el("img"); img.src = p.image + V; img.alt = p.title || "โปรโมชั่น"; img.loading = "lazy";
+      if (p.w && p.h) { img.width = p.w; img.height = p.h; }
+      const bd = el("div", "bd");
+      if (p.until) bd.append(el("span", "until", "หมดเขต " + thDate(p.until)));
+      if (p.title) bd.append(el("h3", null, p.title));
+      if (p.detail) bd.append(el("p", "det", p.detail));
+      const href = safe(p.url) || lineUrl();
+      if (href) { const a = el("a", "cta", p.button || "สอบถาม / สมัครทาง LINE"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; bd.append(a); }
+      c.append(img, bd); return c;
+    }));
+    go(0); auto();
+    if (/^#promo/.test(location.hash)) window.showPromo(location.hash);
+  }
+
+  $("pprev").onclick = () => { go(idx - 1); auto(); };
+  $("pnext").onclick = () => { go(idx + 1); auto(); };
+  let st; $("ptrack").addEventListener("scroll", () => { clearTimeout(st); st = setTimeout(() => { const t = $("ptrack"); const i = Math.round(t.scrollLeft / Math.max(1, t.clientWidth)); if (i !== idx) { idx = i; [...$("pdots").children].forEach((d, k) => d.setAttribute("aria-current", k === idx)); auto(); } }, 120); });
+  $("car").addEventListener("mouseenter", () => clearInterval(timer));
+  $("car").addEventListener("mouseleave", auto);
+
+  fetch("data/promos.json?v=" + Date.now(), { cache: "no-store" })
+    .then(r => { if (!r.ok) throw 0; return r.json(); })
+    .then(j => { items = (Array.isArray(j.items) ? j.items : []).filter(p => p && typeof p.image === "string" && /^(data\/promo-img|promos)\/[^/]+$/.test(p.image)); render(); })
+    .catch(() => { items = []; render(); });
+})();
 
 // ===== สรุปข่าวตลาด (data/news.json) =====
 (function(){
