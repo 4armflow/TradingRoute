@@ -18,18 +18,39 @@ function excerpt(text) {
 const creditFor = url => /\/s\/iq\//.test(url) ? "สำนักข่าวอินโฟเควสท์ (IQ) ผ่าน ryt9.com" : "ryt9.com";
 
 // ลำดับมีผล: ข่าวหนึ่งได้ป้ายแรกที่ตรง
+const GOLD = /ทองคำ|ราคาทอง|ตลาดทอง|ทองปิด|ทองพุ่ง|ทองร่วง|ทองดิ่ง|ทองขยับ|ทองยืน|ทองบวก|ทองลบ|ทองแตะ|ทองทำ|ทองฟื้น|ทองแกว่ง|\bXAU|\bgold\b/i;
+const MAJOR = /สหรัฐ|เฟด|ยูโรโซน|อียู|อังกฤษ|ญี่ปุ่น|จีน|เยอรมนี|ทั่วโลก|\bIMF\b|นิวยอร์ก/;
 const TAGS = [
-  ["gold",     /ทอง/],
-  ["fed",      /เฟด|\bFed\b|FOMC|พาวเวล/i],
-  ["central",  /ธนาคารกลาง|\bECB\b|\bBoE\b|\bBoJ\b|\bRBA\b|\bPBOC\b|อีซีบี|บีโอเจ/i],
-  ["dollar",   /(?<!ล้าน)(?<!พัน)ดอลลาร์(?!สหรัฐ\s*\d)|ตลาดเงิน|บอนด์|ยีลด์|พันธบัตร|ดัชนีดอลลาร์/],
-  ["economy",  /เงินเฟ้อ|\bCPI\b|\bPCE\b|จ้างงาน|ว่างงาน|nonfarm|\bGDP\b|\bISM\b|\bPMI\b|ค้าปลีก|ความเชื่อมั่นผู้บริโภค|เศรษฐกิจสหรัฐ|\bIMF\b/i],
-  ["oil",      /น้ำมัน|\bWTI\b|เบรนท์|โอเปก|\bOPEC\b/i],
-  ["tariff",   /ภาษีนำเข้า|กำแพงภาษี|ภาษีทรัมป์|สงครามการค้า|ข้อตกลงการค้า|ภาษีศุลกากร/],
-  ["geo",      /อิหร่าน|ฮอร์มุซ|อิสราเอล|ยูเครน|รัสเซีย|สงคราม|ขีปนาวุธ|โจมตี|ทะเลแดง|ฮูตี/],
-  ["uspol",    /เดโมแครต|รีพับลิกัน|สภาคองเกรส|วุฒิสภาสหรัฐ|ชัตดาวน์|เพดานหนี้/],
+  ["gold",     t => GOLD.test(t)],
+  ["fed",      t => /เฟด|\bFed\b|FOMC|พาวเวล/i.test(t)],
+  ["central",  t => /ธนาคารกลาง(?!แห่งประเทศไทย)|\bECB\b|\bBoE\b|\bBoJ\b|\bRBA\b|\bPBOC\b|\bSNB\b|อีซีบี|บีโอเจ/i.test(t)],
+  ["dollar",   t => /(?<!ล้าน)(?<!พัน)ดอลลาร์(?!สหรัฐ\s*\d)|ตลาดเงินนิวยอร์ก|บอนด์ยีลด์|ยีลด์|พันธบัตรรัฐบาลสหรัฐ|ดัชนีดอลลาร์/.test(t)],
+  ["economy",  t => /เงินเฟ้อ|\bCPI\b|\bPCE\b|\bPPI\b|จ้างงาน|ว่างงาน|nonfarm|\bGDP\b|\bISM\b|\bPMI\b|ยอดค้าปลีก|ความเชื่อมั่นผู้บริโภค|เศรษฐกิจ/i.test(t) && MAJOR.test(t)],
+  ["oil",      t => /น้ำมัน(ดิบ|โลก)|ตลาดน้ำมัน|ราคาน้ำมัน|\bWTI\b|เบรนท์|โอเปก|\bOPEC\b/i.test(t)],
+  ["tariff",   t => /ภาษีนำเข้า|กำแพงภาษี|ภาษีทรัมป์|สงครามการค้า|ข้อตกลงการค้า|ภาษีศุลกากร/.test(t)],
+  ["geo",      t => /อิหร่าน|ฮอร์มุซ|อิสราเอล|ยูเครน|รัสเซีย|ขีปนาวุธ|ทะเลแดง|ฮูตี|ไต้หวัน|เกาหลีเหนือ|นิวเคลียร์/.test(t)],
+  ["uspol",    t => /ชัตดาวน์|เพดานหนี้|งบประมาณสหรัฐ/.test(t)],
 ];
 const CORE = new Set(["gold", "fed", "central", "dollar", "economy"]);
+
+// ข่าวที่ไม่ต้องการแม้มีคำตรง
+const DROP = [
+  /ทองแดง|ทองคำขาว/,                                                 // ไม่ใช่ทองคำ
+  /ลุ้น|แจก|มอบทอง|ได้ทอง|รับทอง|โปรโมชั่น|กิจกรรม|สมาชิก|ชิงโชค|ของรางวัล/, // ข่าวประชาสัมพันธ์
+  /^(World Markets|ภาวะตลาดหุ้น|ภาวะตลาดอนุพันธ์|ภาวะตลาดสินค้าโภคภัณฑ์|ตลาดหุ้น|หุ้น)/, // ข่าวตลาดหุ้น
+  /ดาวโจนส์|Nasdaq|S&P\s?500|FTSE|Sensex|นิกเคอิ|ฮั่งเส็ง|\bSET\b|TFEX|NVDR/i,
+  /เงินบาท|กรอบบาท|บาท\/ดอลลาร์|\bกนง\b|กนง\.|ธปท|ราคาน้ำมันขายปลีก|ดีเซล|เบนซิน|แก๊สโซฮอล์|สนค\.|ค่ากลางเงินหยวน/, // ข่าวในประเทศไทย / ข่าวประจำวันที่ไม่มีผล
+];
+
+export function classify(title, category) {
+  if (DROP.some(re => re.test(title))) return null;
+  if (category && !["world", "economy"].includes(category)) return null;
+  const hit = TAGS.find(([, test]) => test(title));
+  if (!hit) return null;
+  if (category === "economy" && !CORE.has(hit[0])) return null; // หมวดเศรษฐกิจไทย: เอาเฉพาะข่าวหลัก
+  if (/ไทย/.test(title) && hit[0] !== "gold") return null;          // ข่าวเศรษฐกิจไทย (เว้นราคาทองในประเทศ)
+  return hit[0];
+}
 
 const decode = s => String(s || "")
   .replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, "$1")
@@ -38,15 +59,6 @@ const decode = s => String(s || "")
   .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&amp;/g, "&")
   .replace(/\s+/g, " ").trim();
 const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`)); return m ? decode(m[1]) : ""; };
-
-function classify(title, category) {
-  const hit = TAGS.find(([, re]) => re.test(title));
-  if (!hit) return null;
-  const t = hit[0];
-  // ตัดข่าวหุ้นรายตัว/การเมืองไทย/ภาวะตลาดหุ้น เว้นแต่เป็นข่าวหลัก (ทอง เฟด ดอลลาร์ เศรษฐกิจ)
-  if (!CORE.has(t) && (["stock", "politics", "general"].includes(category) || /^ภาวะตลาดหุ้น/.test(title))) return null;
-  return t;
-}
 
 async function main() {
   const res = await fetch(FEED, { headers: { "User-Agent": "Mozilla/5.0 (compatible; TradingRoute headline reader; +https://4armflow.github.io/TradingRoute/)" } });
@@ -58,7 +70,7 @@ async function main() {
     const time = new Date(tag(it, "pubDate"));
     const t = classify(title, cat);
     if (!t || !/^https:\/\/www\.ryt9\.com\//.test(link) || isNaN(time)) return null;
-    return { title, url: link, time: time.toISOString(), tag: t, urgent: /ด่วน/.test(title) || undefined,
+    return { title, url: link, time: time.toISOString(), tag: t, cat, urgent: /ด่วน/.test(title) || undefined,
              summary: excerpt(tag(it, "description")) || undefined, credit: creditFor(link) };
   }).filter(Boolean);
   if (!xml.includes("<item>")) throw new Error("feed has no items");
@@ -67,6 +79,8 @@ async function main() {
   try { old = JSON.parse(await readFile(OUT, "utf8")).items || []; } catch {}
   const byUrl = new Map();
   for (const it of [...old, ...fresh]) byUrl.set(it.url, it);
+  // กรองข่าวเก่าที่เก็บไว้ด้วยกฎล่าสุดเสมอ
+  for (const [u, it] of byUrl) { const t = classify(it.title, it.cat); if (!t) byUrl.delete(u); else it.tag = t; }
   const cutoff = Date.now() - KEEP_DAYS * 864e5;
   const items = [...byUrl.values()]
     .filter(it => Date.parse(it.time) >= cutoff)
@@ -80,4 +94,5 @@ async function main() {
   console.log(`saved ${items.length} items (${fresh.length} matched in feed)`);
 }
 
-main().catch(e => { console.error(e.message); process.exit(1); });
+if (import.meta.url === new URL(process.argv[1], "file://").href || process.argv[1]?.endsWith("fetch-ryt9.mjs"))
+  main().catch(e => { console.error(e.message); process.exit(1); });
