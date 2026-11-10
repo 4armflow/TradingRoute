@@ -1,14 +1,14 @@
 {
-  "updated": "2026-11-10T00:44:01.654Z",
+  "updated": "2026-11-10T05:26:44.211Z",
   "items": [
     {
       "id": "promo-1",
       "image": "data/promo-img/0e32c31944fa.webp",
       "w": 1080,
       "h": 1080,
-      "title": "",
+      "title": "Double Joy โบนัสเงินฝาก 100% สูงสุด $200",
       "detail": "",
-      "until": "",
+      "until": "2026-11-16",
       "url": "",
       "button": ""
     },
@@ -17,9 +17,9 @@
       "image": "data/promo-img/3b81a3cc3e5d.webp",
       "w": 1080,
       "h": 1080,
-      "title": "",
+      "title": "BTC + Gold 24/7 Mission รับรางวัล $1,000",
       "detail": "",
-      "until": "",
+      "until": "2026-11-27",
       "url": "",
       "button": ""
     }

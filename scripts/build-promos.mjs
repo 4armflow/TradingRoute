@@ -39,6 +39,7 @@ function parseText(txt) {
   const keys = { "หัวข้อ": "title", "หมดเขต": "until", "ลิงก์": "url", "ลิงค์": "url", "ปุ่ม": "button" };
   let inDetail = false; const detail = [];
   for (const line of lines) {
+    if (/^\s*#/.test(line)) continue; // บรรทัดที่ขึ้นต้นด้วย # คือคำอธิบาย ไม่แสดงบนเว็บ
     const m = line.match(/^\s*(หัวข้อ|หมดเขต|ลิงก์|ลิงค์|ปุ่ม|รายละเอียด)\s*[:：]\s*(.*)$/);
     if (m && m[1] === "รายละเอียด") { inDetail = true; if (m[2].trim()) detail.push(m[2]); continue; }
     if (m && !inDetail) { out[keys[m[1]]] = m[2].trim(); continue; }

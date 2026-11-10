@@ -385,8 +385,8 @@ loadData(["content.js", "brief.js"], function(){
       if (p.until) bd.append(el("span", "until", "หมดเขต " + thDate(p.until)));
       if (p.title) bd.append(el("h3", null, p.title));
       if (p.detail) bd.append(el("p", "det", p.detail));
-      const href = safe(p.url) || lineUrl();
-      if (href) { const a = el("a", "cta", p.button || "สอบถาม / สมัครทาง LINE"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; bd.append(a); }
+      const href = (p.button || p.url) ? (safe(p.url) || lineUrl()) : null; // ปุ่มขึ้นเฉพาะเมื่อใส่ "ปุ่ม:" หรือ "ลิงก์:" ในไฟล์ .txt
+      if (href) { const a = el("a", "cta", p.button || "ดูรายละเอียด"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; bd.append(a); }
       c.append(img, bd); return c;
     }));
     go(0); auto();
