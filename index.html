@@ -57,18 +57,18 @@ section{margin-top:44px;display:grid;gap:16px}
 h2{font-size:24px}
 .date{font-family:var(--mono);font-size:13px;color:var(--muted)}
 
-.car{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.car{position:relative;width:100%;max-width:400px;justify-self:center;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
 .track::-webkit-scrollbar{display:none}
-.slide{flex:0 0 100%;scroll-snap-align:start;position:relative;aspect-ratio:4/3;max-height:520px;width:100%;display:block;overflow:hidden;background:var(--raise)}
+.slide{flex:0 0 100%;scroll-snap-align:start;position:relative;aspect-ratio:1/1;width:100%;display:block;overflow:hidden;background:var(--raise)}
 .slide .bg{position:absolute;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);max-width:none;object-fit:cover;filter:blur(20px) brightness(.9);opacity:.6}
 .slide .fg{position:relative;width:100%;height:100%;object-fit:contain}
-.car .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:var(--fg);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(14,26,51,.2)}
-.car .prev{left:10px}.car .next{right:10px}
+.car .nav{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:var(--fg);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(14,26,51,.2)}
+.car .prev{left:8px}.car .next{right:8px}
 .dots{display:flex;justify-content:center;gap:8px}
 .dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;background:var(--line);cursor:pointer}
 .dots button[aria-current="true"]{background:var(--gold);width:20px;border-radius:4px}
-.plist{display:grid;gap:20px}
+.plist{display:grid;gap:20px;width:100%;max-width:520px;justify-self:center;margin:0 auto}
 .pc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;scroll-margin-top:16px}
 .pc img{width:100%;height:auto;background:var(--raise)}
 .pc .bd{padding:16px 18px;display:grid;gap:8px}
