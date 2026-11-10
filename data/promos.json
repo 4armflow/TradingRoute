@@ -1,9 +1,20 @@
 {
-  "updated": "2026-11-10T00:42:58.840Z",
+  "updated": "2026-11-10T00:44:01.654Z",
   "items": [
     {
       "id": "promo-1",
       "image": "data/promo-img/0e32c31944fa.webp",
+      "w": 1080,
+      "h": 1080,
+      "title": "",
+      "detail": "",
+      "until": "",
+      "url": "",
+      "button": ""
+    },
+    {
+      "id": "promo-2",
+      "image": "data/promo-img/3b81a3cc3e5d.webp",
       "w": 1080,
       "h": 1080,
       "title": "",
