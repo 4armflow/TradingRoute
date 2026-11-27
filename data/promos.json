@@ -1,16 +1,4 @@
 {
-  "updated": "2026-11-16T17:54:34.601Z",
-  "items": [
-    {
-      "id": "promo-1",
-      "image": "data/promo-img/3b81a3cc3e5d.webp",
-      "w": 1080,
-      "h": 1080,
-      "title": "BTC + Gold 24/7 Mission รับรางวัล $1,000",
-      "detail": "",
-      "until": "2026-11-27",
-      "url": "",
-      "button": ""
-    }
-  ]
+  "updated": "2026-11-27T17:50:47.848Z",
+  "items": []
 }
